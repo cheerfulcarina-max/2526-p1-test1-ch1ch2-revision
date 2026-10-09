@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P1 English Revision Quest - Macau GD Middle School Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            quicksand: ['Quicksand', 'sans-serif'],
+          },
+          boxShadow: {
+            'comic': '0 5px 0px rgba(0,0,0,0.18)',
+            'comic-pressed': '0 2px 0px rgba(0,0,0,0.18)',
+            'card-float': '0 16px 32px -8px rgba(30, 41, 59, 0.15)',
+            'bell-glow': '0 0 16px rgba(245, 158, 11, 0.75)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Fredoka', 'Quicksand', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-bounce {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-bounce:hover {
+      transform: translateY(-2px);
+    }
+    .btn-bounce:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.18) !important;
+    }
+    @keyframes bell-ring {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(18deg); }
+      40% { transform: rotate(-18deg); }
+      60% { transform: rotate(12deg); }
+      80% { transform: rotate(-12deg); }
+    }
+    .bell-ringing {
+      animation: bell-ring 0.65s ease-in-out infinite;
+      transform-origin: top center;
+    }
+    .speaking-pulse {
+      animation: pulse-ring 1.3s infinite ease-in-out;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { transform: scale(1); opacity: 0.95; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-100 via-amber-50 to-emerald-100 min-h-screen text-slate-800 flex flex-col justify-between">
+
+  <header class="bg-white/95 backdrop-blur-md sticky top-0 z-40 border-b-4 border-amber-300 shadow-sm px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 border-2 border-amber-400 flex items-center justify-center shadow text-white font-black text-xl">
+          GD
+        </div>
+        <div>
+          <h1 class="text-base sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
+            P1 English Revision Quest
+          </h1>
+          <p class="text-xs text-sky-700 font-bold">1st Term English Test Revision · Ch 1 & Ch 2 Vocab</p>
+        </div>
+      </div>
+
+      <!-- Controls: Auto Read Toggle & Mechanical Bell Trigger & Star Counter -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button id="auto-read-btn" class="px-3 py-1.5 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-900 border-2 border-sky-300 flex items-center gap-1.5 font-bold text-xs transition shadow-sm" title="Toggle Auto Teacher Read">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+          <span class="hidden sm:inline">Auto Read:</span>
+          <span id="auto-read-label" class="text-emerald-700 font-black">ON</span>
+        </button>
+
+        <!-- Mechanical Bell Sound Indicator & Test Button -->
+        <button onclick="testMechanicalBell()" id="bell-demo-btn" class="p-2 sm:px-3 sm:py-1.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 border-2 border-amber-300 flex items-center gap-1.5 font-bold text-xs transition shadow-sm" title="Test Mechanical Bell Chime">
+          <svg class="w-4 h-4 text-amber-600 fill-current" viewBox="0 0 24 24">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+          </svg>
+          <span class="hidden md:inline">Bell Chime</span>
+        </button>
+
+        <!-- Teacher Voice Prompt with Bell Blank -->
+        <button onclick="readCurrentTeacherPromptWithBell()" id="teacher-read-btn" class="p-2 sm:px-3 sm:py-1.5 rounded-2xl bg-amber-400 hover:bg-amber-500 text-white border-2 border-amber-500 flex items-center gap-1.5 font-black text-xs shadow-comic btn-bounce" title="Teacher Reads with Mechanical Bell">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <span class="hidden sm:inline">Teacher Read</span>
+        </button>
+
+        <!-- Star Counter -->
+        <div class="flex items-center gap-1.5 bg-amber-100/90 px-3 py-1.5 rounded-2xl border-2 border-amber-300 shadow-inner">
+          <svg class="w-6 h-6 text-amber-500 fill-current animate-pulse" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+          <span id="star-count" class="text-xl font-black text-amber-800">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="max-w-5xl mx-auto mt-2.5">
+      <div class="flex items-center justify-between text-xs font-bold text-slate-600 mb-1 px-1">
+        <span id="stage-indicator" class="text-sky-800 font-extrabold">Stage 1: Cartoon Vocab Island</span>
+        <span id="progress-percentage">0% Completed</span>
+      </div>
+      <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden p-0.5 border border-slate-300">
+        <div id="quest-progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-emerald-400 to-sky-500 rounded-full transition-all duration-500 w-[5%]"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl w-full mx-auto p-4 flex-1 flex flex-col justify-center">
+
+    <!-- Navigation tabs across 4 stages -->
+    <nav class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+      <button onclick="switchStage(1)" id="nav-btn-1" class="py-2.5 px-3 rounded-2xl bg-amber-400 text-white font-extrabold text-sm shadow-comic border-2 border-amber-500 flex items-center justify-center gap-1.5 transition">
+        <span class="w-5 h-5 rounded-full bg-white text-amber-600 text-xs font-black inline-flex items-center justify-center">1</span>
+        <span>Vocab Island</span>
+      </button>
+      <button onclick="switchStage(2)" id="nav-btn-2" class="py-2.5 px-3 rounded-2xl bg-white text-slate-600 font-bold text-sm shadow-sm border-2 border-slate-200 flex items-center justify-center gap-1.5 hover:bg-slate-50 transition">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs font-black inline-flex items-center justify-center">2</span>
+        <span>Grammar Woods</span>
+      </button>
+      <button onclick="switchStage(3)" id="nav-btn-3" class="py-2.5 px-3 rounded-2xl bg-white text-slate-600 font-bold text-sm shadow-sm border-2 border-slate-200 flex items-center justify-center gap-1.5 hover:bg-slate-50 transition">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs font-black inline-flex items-center justify-center">3</span>
+        <span>Capital Castle</span>
+      </button>
+      <button onclick="switchStage(4)" id="nav-btn-4" class="py-2.5 px-3 rounded-2xl bg-white text-slate-600 font-bold text-sm shadow-sm border-2 border-slate-200 flex items-center justify-center gap-1.5 hover:bg-slate-50 transition">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-xs font-black inline-flex items-center justify-center">4</span>
+        <span>Chat Arena</span>
+      </button>
+    </nav>
+
+    <!-- Teacher Voice Prompt Banner with Mechanical Bell Indicator -->
+    <div id="teacher-speech-banner" class="mb-3 bg-amber-100/90 border-2 border-amber-300 rounded-2xl p-3 flex items-center justify-between gap-3 shadow-sm transition-all duration-300">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-amber-400 text-white flex items-center justify-center text-lg font-black shadow flex-shrink-0" id="teacher-avatar">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-black uppercase text-amber-800 tracking-wider">Teacher Reads:</span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 text-amber-900 border border-amber-300">
+              <svg class="w-3 h-3 text-amber-700 fill-current" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+              Bell sounds at blanks!
+            </span>
+          </div>
+          <div id="teacher-spoken-text" class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 flex flex-wrap items-center gap-1">
+            "Look at the picture. What is the [BELL]?"
+          </div>
+        </div>
+      </div>
+      <button onclick="readCurrentTeacherPromptWithBell()" class="px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-900 border border-amber-400 text-xs font-black rounded-xl shadow-sm flex items-center gap-1 flex-shrink-0 btn-bounce">
+        <svg class="w-3.5 h-3.5 text-amber-600 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <span>Play Bell & Read</span>
+      </button>
+    </div>
+
+    <!-- Stage 1 Section -->
+    <section id="stage-1" class="quest-stage bg-white rounded-3xl p-5 md:p-8 shadow-card-float border-4 border-amber-300 relative">
+      <div class="flex items-center justify-between border-b pb-3 mb-4 gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-black">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.67 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg md:text-xl font-black text-slate-800">Stage 1: Cartoon Vocab Island</h2>
+            <p class="text-xs text-slate-500 font-semibold">Ch 1 Time & People + Ch 2 Family & Friends</p>
+          </div>
+        </div>
+        <span class="text-xs font-black px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full border border-amber-300">
+          Card <span id="s1-q-index">1</span> of 10
+        </span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <!-- SVG Container -->
+        <div id="s1-art-container" class="w-64 h-56 sm:w-72 sm:h-64 rounded-2xl overflow-hidden border-4 border-amber-200 shadow-md bg-amber-50/50 flex items-center justify-center p-2 mb-4">
+        </div>
+
+        <div id="s1-prompt-display" class="text-base sm:text-lg font-black text-slate-800 mb-4 text-center flex flex-wrap items-center justify-center gap-1.5">
+        </div>
+
+        <div id="s1-options" class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg mb-2">
+        </div>
+
+        <div id="s1-feedback" class="mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl transition"></div>
+      </div>
+    </section>
+
+    <!-- Stage 2 Section -->
+    <section id="stage-2" class="quest-stage hidden bg-white rounded-3xl p-5 md:p-8 shadow-card-float border-4 border-emerald-400 relative">
+      <div class="flex items-center justify-between border-b pb-3 mb-4 gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm6 9.09c0 4-2.55 7.7-6 8.83-3.45-1.13-6-4.82-6-8.83v-4.7l6-2.25 6 2.25v4.7z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg md:text-xl font-black text-slate-800">Stage 2: Grammar Woods</h2>
+            <p class="text-xs text-slate-500 font-semibold">Pronouns (I, you, he, she, we) & Verb-to-be (am, is, are)</p>
+          </div>
+        </div>
+        <span class="text-xs font-black px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-full border border-emerald-300">
+          Question <span id="s2-q-index">1</span> / 7
+        </span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <div id="s2-art-container" class="w-56 h-44 sm:w-64 sm:h-48 rounded-2xl overflow-hidden border-2 border-emerald-200 mb-4 shadow flex items-center justify-center bg-emerald-50/40 p-2">
+        </div>
+
+        <div class="w-full bg-emerald-50/90 border-2 border-emerald-200 rounded-2xl p-4 sm:p-5 mb-4 text-center">
+          <div id="s2-question-text" class="text-xl sm:text-2xl font-black text-slate-800 tracking-wide my-1 flex flex-wrap items-center justify-center gap-2">
+          </div>
+          <p id="s2-hint-text" class="text-xs sm:text-sm font-bold text-emerald-700 mt-1"></p>
+        </div>
+
+        <div id="s2-options" class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-md mb-2">
+        </div>
+
+        <div id="s2-feedback" class="mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl"></div>
+      </div>
+    </section>
+
+    <!-- Stage 3 Section -->
+    <section id="stage-3" class="quest-stage hidden bg-white rounded-3xl p-5 md:p-8 shadow-card-float border-4 border-indigo-400 relative">
+      <div class="flex items-center justify-between border-b pb-3 mb-4 gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg md:text-xl font-black text-slate-800">Stage 3: Capital & Punctuation Castle</h2>
+            <p class="text-xs text-slate-500 font-semibold">Start with Capital, Names, Pronoun I, Full Stop (.) or Question Mark (?)</p>
+          </div>
+        </div>
+        <span class="text-xs font-black px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-full border border-indigo-300">
+          Sentence <span id="s3-q-index">1</span> / 5
+        </span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <div class="w-full bg-slate-50 rounded-2xl border-2 border-slate-200 p-4 sm:p-5 mb-4 text-center">
+          <p class="text-xs font-black text-indigo-700 uppercase tracking-wider mb-1">Sentence with missing rules:</p>
+          <div id="s3-raw-sentence" class="text-xl sm:text-2xl font-mono font-black bg-white px-4 py-2.5 rounded-xl border border-rose-300 text-rose-600 shadow-inner inline-block">
+          </div>
+          <p class="text-xs text-slate-600 font-bold mt-2">Pick the sentence with correct capital letters and ending mark:</p>
+        </div>
+
+        <div id="s3-options" class="flex flex-col gap-3 w-full max-w-lg mb-2">
+        </div>
+
+        <div id="s3-feedback" class="mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-sm sm:text-base px-4 py-1.5 rounded-xl"></div>
+      </div>
+    </section>
+
+    <!-- Stage 4 Section -->
+    <section id="stage-4" class="quest-stage hidden bg-white rounded-3xl p-5 md:p-8 shadow-card-float border-4 border-sky-400 relative">
+      <div class="flex items-center justify-between border-b pb-3 mb-4 gap-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center font-black">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg md:text-xl font-black text-slate-800">Stage 4: Chat Arena</h2>
+            <p class="text-xs text-slate-500 font-semibold">Greetings, Age, Name & Classroom Polite Dialogues</p>
+          </div>
+        </div>
+        <span class="text-xs font-black px-3 py-1.5 bg-sky-100 text-sky-800 rounded-full border border-sky-300">
+          Conversation <span id="s4-q-index">1</span> / 5
+        </span>
+      </div>
+
+      <div class="flex flex-col items-center">
+        <div id="s4-art-container" class="w-56 h-40 sm:w-64 sm:h-44 rounded-2xl overflow-hidden border-2 border-sky-200 mb-4 shadow flex items-center justify-center bg-sky-50/50 p-2">
+        </div>
+
+        <div class="w-full max-w-md bg-sky-50 border-2 border-sky-200 p-4 rounded-2xl mb-4 shadow-sm flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex-shrink-0 flex items-center justify-center font-black text-base shadow">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
+          </div>
+          <div>
+            <span id="s4-speaker" class="text-xs font-black text-sky-800 uppercase tracking-wider block">Greeting prompt:</span>
+            <div id="s4-prompt-text" class="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">
+            </div>
+          </div>
+        </div>
+
+        <p class="text-xs sm:text-sm font-black text-slate-600 mb-3 text-center flex items-center gap-1.5">
+          <span>What is the best answer?</span>
+          <span class="text-amber-600 text-xs">(Listen for the bell)</span>
+        </p>
+
+        <div id="s4-options" class="flex flex-col gap-2.5 w-full max-w-md mb-2">
+        </div>
+
+        <div id="s4-feedback" class="mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-sm sm:text-base px-4 py-1.5 rounded-xl"></div>
+      </div>
+    </section>
+
+    <!-- Victory Modal -->
+    <section id="victory-modal" class="quest-stage hidden bg-white rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-amber-400 text-center relative max-w-lg mx-auto">
+      <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 border-4 border-amber-400 flex items-center justify-center shadow-lg text-amber-700 mb-4 animate-bounce">
+        <svg class="w-14 h-14 fill-current" viewBox="0 0 24 24">
+          <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V19H7v2h10v-2h-4v-3.1c1.88-.41 3.32-1.9 3.61-3.96C19.08 11.63 21 9.55 21 7V5c0-1.1-.9-2-2-2zm-14 3V7h2v3.8c-1.21-.37-2-1.46-2-2.8zm14 0c0 1.34-.79 2.43-2 2.8V7h2v1z"/>
+        </svg>
+      </div>
+
+      <h2 class="text-3xl font-black text-slate-900 mb-1">Quest Completed!</h2>
+      <p class="text-base text-emerald-600 font-extrabold mb-4">Brilliant! You are well prepared for the P1 English Test!</p>
+
+      <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 mb-6 grid grid-cols-3 gap-2 text-center">
+        <div>
+          <span class="block text-xs font-bold text-slate-500">Stars</span>
+          <span id="final-stars" class="text-2xl sm:text-3xl font-black text-amber-500">27</span>
+        </div>
+        <div>
+          <span class="block text-xs font-bold text-slate-500">Accuracy</span>
+          <span class="text-2xl sm:text-3xl font-black text-emerald-600">100%</span>
+        </div>
+        <div>
+          <span class="block text-xs font-bold text-slate-500">Badge</span>
+          <span class="text-2xl sm:text-3xl font-black text-sky-600">Master</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button onclick="restartFullQuest()" class="btn-bounce px-6 py-3.5 bg-amber-400 hover:bg-amber-500 text-white font-black text-base rounded-2xl shadow-comic border-b-4 border-amber-600">
+          Play Again (Reshuffle All)
+        </button>
+        <button onclick="switchStage(1)" class="btn-bounce px-6 py-3.5 bg-sky-500 hover:bg-sky-600 text-white font-black text-base rounded-2xl shadow-comic border-b-4 border-sky-700">
+          Review Vocab Island
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-3 text-xs font-bold text-slate-500 px-4">
+    Macau Primary 1 English Test Revision Quest · Chapter 1 & Chapter 2 Vocabulary · 100% English Environment
+  </footer>
+
+  <script>
+    const cartoonSVG = {
+      morning: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#E0F2FE" rx="16"/>
+          <circle cx="100" cy="115" r="38" fill="#FBBF24"/>
+          <path d="M100 65v-12M65 80l-9-9M135 80l9-9M55 115H42M158 115h-13" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+          <path d="M0 145 C40 120 70 120 110 140 C140 155 170 140 200 150 L200 200 L0 200 Z" fill="#34D399"/>
+          <path d="M-10 160 C50 145 100 160 150 150 C180 145 200 155 210 165 L210 200 L-10 200 Z" fill="#10B981"/>
+          <rect x="35" y="140" width="40" height="6" fill="#78350F" rx="2"/>
+          <rect x="42" y="146" width="6" height="25" fill="#78350F" rx="2"/>
+          <rect x="62" y="146" width="6" height="25" fill="#78350F" rx="2"/>
+          <ellipse cx="55" cy="128" rx="14" ry="12" fill="#F87171"/>
+          <circle cx="63" cy="118" r="8" fill="#F87171"/>
+          <path d="M60 110 Q64 105 67 110 Q70 106 72 112" fill="#DC2626"/>
+          <polygon points="70,118 78,121 70,124" fill="#F59E0B"/>
+          <circle cx="65" cy="116" r="2" fill="#1F2937"/>
+          <path d="M43 125 Q35 120 38 132 Q44 135 48 130" fill="#2563EB"/>
+        </svg>
+      `,
+      afternoon: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#BAE6FD" rx="16"/>
+          <circle cx="100" cy="80" r="36" fill="#F59E0B"/>
+          <circle cx="100" cy="80" r="28" fill="#FDE047"/>
+          <rect x="80" y="74" width="16" height="12" rx="4" fill="#1E293B"/>
+          <rect x="104" y="74" width="16" height="12" rx="4" fill="#1E293B"/>
+          <line x1="96" y1="78" x2="104" y2="78" stroke="#1E293B" stroke-width="3"/>
+          <path d="M92 95 Q100 102 108 95" stroke="#B45309" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <g stroke="#F59E0B" stroke-width="5" stroke-linecap="round">
+            <line x1="100" y1="28" x2="100" y2="38"/>
+            <line x1="100" y1="122" x2="100" y2="132"/>
+            <line x1="48" y1="80" x2="58" y2="80"/>
+            <line x1="142" y1="80" x2="152" y2="80"/>
+            <line x1="63" y1="43" x2="71" y2="51"/>
+            <line x1="129" y1="109" x2="137" y2="117"/>
+            <line x1="63" y1="117" x2="71" y2="109"/>
+            <line x1="129" y1="51" x2="137" y2="43"/>
+          </g>
+          <path d="M0 165 Q100 155 200 165 L200 200 L0 200 Z" fill="#4ADE80"/>
+          <rect x="35" y="130" width="14" height="40" fill="#92400E" rx="3"/>
+          <circle cx="42" cy="120" r="28" fill="#16A34A"/>
+          <circle cx="56" cy="115" r="22" fill="#22C55E"/>
+        </svg>
+      `,
+      boy: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#FEF3C7" rx="16"/>
+          <path d="M72 82 C68 45 132 45 128 82" fill="#78350F"/>
+          <circle cx="100" cy="85" r="32" fill="#FCD34D"/>
+          <path d="M70 75 Q85 62 100 70 Q115 62 130 75" fill="#78350F"/>
+          <circle cx="88" cy="84" r="4" fill="#1E293B"/>
+          <circle cx="112" cy="84" r="4" fill="#1E293B"/>
+          <circle cx="89" cy="82" r="1.5" fill="#FFFFFF"/>
+          <circle cx="113" cy="82" r="1.5" fill="#FFFFFF"/>
+          <path d="M92 98 Q100 106 108 98" stroke="#B45309" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="78" cy="92" rx="4" ry="2" fill="#F87171" opacity="0.6"/>
+          <ellipse cx="122" cy="92" rx="4" ry="2" fill="#F87171" opacity="0.6"/>
+          <path d="M72 120 L128 120 L138 175 L62 175 Z" fill="#3B82F6" rx="6"/>
+          <polygon points="100,120 106,145 100,152 94,145" fill="#EF4444"/>
+          <polygon points="80,120 100,132 94,120" fill="#FFFFFF"/>
+          <polygon points="120,120 100,132 106,120" fill="#FFFFFF"/>
+          <rect x="74" y="132" width="14" height="10" rx="2" fill="#FFFFFF"/>
+          <text x="76" y="140" font-size="7" font-weight="bold" fill="#1E40AF">1A</text>
+        </svg>
+      `,
+      girl: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#FCE7F3" rx="16"/>
+          <circle cx="62" cy="85" r="14" fill="#92400E"/>
+          <circle cx="138" cy="85" r="14" fill="#92400E"/>
+          <circle cx="60" cy="88" r="5" fill="#EC4899"/>
+          <circle cx="140" cy="88" r="5" fill="#EC4899"/>
+          <circle cx="100" cy="85" r="32" fill="#FCD34D"/>
+          <path d="M70 78 Q100 60 130 78 C125 50 75 50 70 78 Z" fill="#92400E"/>
+          <circle cx="88" cy="86" r="4" fill="#1E293B"/>
+          <circle cx="112" cy="86" r="4" fill="#1E293B"/>
+          <circle cx="89" cy="84" r="1.5" fill="#FFFFFF"/>
+          <circle cx="113" cy="84" r="1.5" fill="#FFFFFF"/>
+          <path d="M85 80 L82 77 M115 80 L118 77" stroke="#1E293B" stroke-width="2" stroke-linecap="round"/>
+          <path d="M92 98 Q100 107 108 98" stroke="#B45309" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="78" cy="94" rx="4" ry="2" fill="#F43F5E" opacity="0.6"/>
+          <ellipse cx="122" cy="94" rx="4" ry="2" fill="#F43F5E" opacity="0.6"/>
+          <path d="M74 120 L126 120 L140 180 L60 180 Z" fill="#EC4899"/>
+          <polygon points="100,120 90,132 100,128 110,132" fill="#FFFFFF"/>
+          <circle cx="100" cy="142" r="3" fill="#FBBF24"/>
+          <circle cx="100" cy="156" r="3" fill="#FBBF24"/>
+        </svg>
+      `,
+      mother: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#EDE9FE" rx="16"/>
+          <circle cx="120" cy="48" r="16" fill="#581C87"/>
+          <circle cx="105" cy="75" r="30" fill="#FDE68A"/>
+          <path d="M78 68 C85 45 130 50 132 75 C120 62 90 62 78 68 Z" fill="#581C87"/>
+          <path d="M92 74 Q98 78 104 74" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M96 87 Q104 94 112 87" stroke="#9333EA" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="88" cy="82" rx="4" ry="2" fill="#F472B6"/>
+          <path d="M75 110 C80 100 135 100 145 110 L155 190 L60 190 Z" fill="#8B5CF6"/>
+          <g transform="translate(65, 115)">
+            <circle cx="25" cy="20" r="16" fill="#FCD34D"/>
+            <path d="M18 16 Q25 12 32 16" fill="#B45309"/>
+            <circle cx="21" cy="20" r="2" fill="#1E293B"/>
+            <circle cx="29" cy="20" r="2" fill="#1E293B"/>
+            <path d="M22 26 Q25 29 28 26" stroke="#B45309" stroke-width="1.5" fill="none"/>
+            <path d="M10 35 C10 28 40 28 42 35 L48 65 L5 65 Z" fill="#F472B6" rx="8"/>
+          </g>
+          <path d="M130 115 Q115 150 75 145" stroke="#FDE68A" stroke-width="12" fill="none" stroke-linecap="round"/>
+        </svg>
+      `,
+      father: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#CFFAFE" rx="16"/>
+          <path d="M72 100 C70 70 130 70 128 100" fill="#1F2937"/>
+          <circle cx="100" cy="110" r="28" fill="#FCD34D"/>
+          <path d="M74 95 Q100 80 126 95" fill="#1F2937"/>
+          <circle cx="89" cy="108" r="3.5" fill="#1F2937"/>
+          <circle cx="111" cy="108" r="3.5" fill="#1F2937"/>
+          <path d="M92 122 Q100 130 108 122" stroke="#B45309" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <rect x="80" y="103" width="16" height="12" rx="3" fill="none" stroke="#0284C7" stroke-width="2"/>
+          <rect x="104" y="103" width="16" height="12" rx="3" fill="none" stroke="#0284C7" stroke-width="2"/>
+          <line x1="96" y1="109" x2="104" y2="109" stroke="#0284C7" stroke-width="2"/>
+          <path d="M55 145 L145 145 L155 200 L45 200 Z" fill="#0284C7"/>
+          <circle cx="100" cy="50" r="18" fill="#FDE68A"/>
+          <path d="M85 45 Q100 32 115 45" fill="#92400E"/>
+          <circle cx="94" cy="49" r="2.5" fill="#1E293B"/>
+          <circle cx="106" cy="49" r="2.5" fill="#1E293B"/>
+          <path d="M96 58 Q100 62 104 58" stroke="#B45309" stroke-width="2" fill="none"/>
+          <path d="M85 68 L115 68 L120 90 L80 90 Z" fill="#F59E0B"/>
+          <line x1="82" y1="72" x2="70" y2="52" stroke="#FDE68A" stroke-width="5" stroke-linecap="round"/>
+          <line x1="118" y1="72" x2="130" y2="52" stroke="#FDE68A" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      `,
+      brother: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#E0E7FF" rx="16"/>
+          <circle cx="75" cy="80" r="24" fill="#FCD34D"/>
+          <path d="M53 72 C55 50 95 50 97 72" fill="#78350F"/>
+          <circle cx="67" cy="80" r="3" fill="#1E293B"/>
+          <circle cx="83" cy="80" r="3" fill="#1E293B"/>
+          <path d="M70 91 Q75 97 80 91" stroke="#92400E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M50 110 L100 110 L105 175 L45 175 Z" fill="#3B82F6"/>
+          <circle cx="125" cy="92" r="20" fill="#FDE68A"/>
+          <path d="M107 85 C110 68 140 68 143 85" fill="#92400E"/>
+          <circle cx="118" cy="92" r="2.5" fill="#1E293B"/>
+          <circle cx="132" cy="92" r="2.5" fill="#1E293B"/>
+          <path d="M121 101 Q125 106 129 101" stroke="#92400E" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M105 118 L145 118 L150 175 L100 175 Z" fill="#10B981"/>
+          <path d="M88 116 Q115 110 128 122" stroke="#FCD34D" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </svg>
+      `,
+      sister: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#FDF2F8" rx="16"/>
+          <circle cx="70" cy="85" r="22" fill="#FCD34D"/>
+          <path d="M50 78 C52 55 90 55 92 78" fill="#B45309"/>
+          <circle cx="50" cy="85" r="5" fill="#EF4444"/>
+          <circle cx="90" cy="85" r="5" fill="#EF4444"/>
+          <circle cx="63" cy="84" r="3" fill="#1E293B"/>
+          <circle cx="77" cy="84" r="3" fill="#1E293B"/>
+          <path d="M66 94 Q70 100 74 94" stroke="#92400E" stroke-width="2" fill="none"/>
+          <path d="M48 112 L92 112 L98 175 L42 175 Z" fill="#F43F5E"/>
+          <circle cx="130" cy="85" r="22" fill="#FDE68A"/>
+          <path d="M110 78 C112 55 150 55 152 78" fill="#92400E"/>
+          <circle cx="123" cy="84" r="3" fill="#1E293B"/>
+          <circle cx="137" cy="84" r="3" fill="#1E293B"/>
+          <path d="M126 94 Q130 100 134 94" stroke="#92400E" stroke-width="2" fill="none"/>
+          <path d="M108 112 L152 112 L158 175 L102 175 Z" fill="#A855F7"/>
+          <path d="M100 75 C95 65 85 70 95 82 C105 70 95 65 100 75 Z" fill="#EC4899"/>
+        </svg>
+      `,
+      classmate: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#ECFDF5" rx="16"/>
+          <rect x="30" y="25" width="140" height="60" rx="6" fill="#065F46" stroke="#92400E" stroke-width="4"/>
+          <text x="75" y="60" font-size="22" font-weight="900" fill="#A7F3D0">1A</text>
+          <text x="110" y="58" font-size="12" font-weight="bold" fill="#FCD34D">ABC</text>
+          <circle cx="100" cy="98" r="24" fill="#FCD34D"/>
+          <path d="M78 92 C80 65 120 65 122 92" fill="#1E293B"/>
+          <circle cx="92" cy="98" r="3" fill="#1E293B"/>
+          <circle cx="108" cy="98" r="3" fill="#1E293B"/>
+          <path d="M96 108 Q100 113 104 108" stroke="#92400E" stroke-width="2" fill="none"/>
+          <path d="M75 126 L125 126 L130 160 L70 160 Z" fill="#2563EB"/>
+          <rect x="35" y="150" width="130" height="16" fill="#D97706" rx="3"/>
+          <polygon points="80,148 100,144 120,148 115,152 100,148 85,152" fill="#FFFFFF"/>
+          <line x1="100" y1="144" x2="100" y2="148" stroke="#1E293B" stroke-width="1.5"/>
+          <line x1="130" y1="145" x2="140" y2="140" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      `,
+      friend: `
+        <svg viewBox="0 0 200 200" class="w-full h-full">
+          <rect width="200" height="200" fill="#FEF9C3" rx="16"/>
+          <circle cx="70" cy="75" r="22" fill="#FCD34D"/>
+          <path d="M50 70 C52 48 90 48 92 70" fill="#78350F"/>
+          <circle cx="63" cy="75" r="3" fill="#1E293B"/>
+          <circle cx="77" cy="75" r="3" fill="#1E293B"/>
+          <path d="M66 84 Q70 90 74 84" stroke="#92400E" stroke-width="2.5" fill="none"/>
+          <path d="M50 100 L90 100 L95 150 L45 150 Z" fill="#0284C7"/>
+          <circle cx="130" cy="75" r="22" fill="#FDE68A"/>
+          <path d="M110 70 C112 48 150 48 152 70" fill="#92400E"/>
+          <circle cx="123" cy="75" r="3" fill="#1E293B"/>
+          <circle cx="137" cy="75" r="3" fill="#1E293B"/>
+          <path d="M126 84 Q130 90 134 84" stroke="#92400E" stroke-width="2.5" fill="none"/>
+          <path d="M110 100 L150 100 L155 150 L105 150 Z" fill="#F59E0B"/>
+          <path d="M85 110 L100 120 L115 110" stroke="#FCD34D" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <polygon points="100,45 104,54 114,54 106,60 109,70 100,64 91,70 94,60 86,54 96,54" fill="#F59E0B"/>
+        </svg>
+      `
+    };
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+  </script>
+
+  <script>
+    let audioCtx = null;
+    let autoReadEnabled = true;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    /* Synthesize a mechanical bell/school chime pulse (880Hz + 1760Hz shimmer) */
+    function playMechanicalBell() {
+      try {
+        initAudioContext();
+        const now = audioCtx.currentTime;
+
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        const gain2 = audioCtx.createGain();
+
+        // Fundamental A5 (880Hz) and harmonic shimmer A6 (1760Hz)
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, now);
+
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1760, now);
+
+        // Metallic bell envelope
+        gain1.gain.setValueAtTime(0.001, now);
+        gain1.gain.linearRampToValueAtTime(0.35, now + 0.015);
+        gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+
+        gain2.gain.setValueAtTime(0.001, now);
+        gain2.gain.linearRampToValueAtTime(0.2, now + 0.015);
+        gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+        osc1.connect(gain1);
+        osc2.connect(gain2);
+        gain1.connect(audioCtx.destination);
+        gain2.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.9);
+        osc2.stop(now + 0.7);
+
+        triggerBellVisualAnimation();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function triggerBellVisualAnimation() {
+      const bellIcons = document.querySelectorAll('.mechanical-bell-badge, .mechanical-bell-inline');
+      bellIcons.forEach(el => {
+        el.classList.add('bell-ringing', 'shadow-bell-glow');
+        setTimeout(() => {
+          el.classList.remove('bell-ringing', 'shadow-bell-glow');
+        }, 700);
+      });
+
+      const demoBtn = document.getElementById('bell-demo-btn');
+      if (demoBtn) {
+        demoBtn.classList.add('ring-2', 'ring-amber-400');
+        setTimeout(() => demoBtn.classList.remove('ring-2', 'ring-amber-400'), 400);
+      }
+    }
+
+    function testMechanicalBell() {
+      playMechanicalBell();
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.2, gainVal = 0.15) {
+      try {
+        initAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 'triangle', 0.12, 0.2); // C5
+      setTimeout(() => playTone(659.25, 'triangle', 0.12, 0.2), 90); // E5
+      setTimeout(() => playTone(783.99, 'triangle', 0.25, 0.2), 180); // G5
+    }
+
+    function playErrorSound() {
+      playTone(280, 'sawtooth', 0.15, 0.15);
+      setTimeout(() => playTone(220, 'sawtooth', 0.2, 0.15), 100);
+    }
+
+    /* Teacher Voice Reading: Speaks prefix, rings chime at blank, then speaks suffix */
+    function speakTeacherWithBell(prefix, suffix) {
+      if (!('speechSynthesis' in window)) {
+        playMechanicalBell();
+        return;
+      }
+      window.speechSynthesis.cancel();
+
+      const teacherBtn = document.getElementById('teacher-read-btn');
+      if (teacherBtn) teacherBtn.classList.add('speaking-pulse');
+
+      const cleanPrefix = (prefix || '').trim();
+      const cleanSuffix = (suffix || '').trim();
+
+      if (cleanPrefix.length > 0) {
+        const uPrefix = new SpeechSynthesisUtterance(cleanPrefix);
+        uPrefix.lang = 'en-US';
+        uPrefix.rate = 0.85;
+        uPrefix.pitch = 1.05;
+
+        uPrefix.onend = () => {
+          playMechanicalBell();
+
+          if (cleanSuffix.length > 0) {
+            setTimeout(() => {
+              const uSuffix = new SpeechSynthesisUtterance(cleanSuffix);
+              uSuffix.lang = 'en-US';
+              uSuffix.rate = 0.85;
+              uSuffix.pitch = 1.05;
+              uSuffix.onend = () => {
+                if (teacherBtn) teacherBtn.classList.remove('speaking-pulse');
+              };
+              window.speechSynthesis.speak(uSuffix);
+            }, 650);
+          } else {
+            if (teacherBtn) teacherBtn.classList.remove('speaking-pulse');
+          }
+        };
+
+        window.speechSynthesis.speak(uPrefix);
+      } else {
+        playMechanicalBell();
+        if (cleanSuffix.length > 0) {
+          setTimeout(() => {
+            const uSuffix = new SpeechSynthesisUtterance(cleanSuffix);
+            uSuffix.lang = 'en-US';
+            uSuffix.rate = 0.85;
+            uSuffix.pitch = 1.05;
+            uSuffix.onend = () => {
+              if (teacherBtn) teacherBtn.classList.remove('speaking-pulse');
+            };
+            window.speechSynthesis.speak(uSuffix);
+          }, 650);
+        } else {
+          if (teacherBtn) teacherBtn.classList.remove('speaking-pulse');
+        }
+      }
+    }
+
+    function getBellBadgeHTML() {
+      return `
+        <span class="mechanical-bell-badge inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-400 text-slate-900 border-2 border-amber-500 font-black text-xs shadow-sm transition transform">
+          <svg class="w-4 h-4 fill-current text-slate-950 animate-bounce" viewBox="0 0 24 24">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+          </svg>
+          <span class="tracking-wider">[BELL]</span>
+        </span>
+      `;
+    }
+
+    function updateTeacherBannerWithBell(prefix, suffix) {
+      const banner = document.getElementById('teacher-spoken-text');
+      if (banner) {
+        banner.innerHTML = `"${prefix} ${getBellBadgeHTML()} ${suffix}"`;
+      }
+    }
+
+    document.getElementById('auto-read-btn').addEventListener('click', () => {
+      autoReadEnabled = !autoReadEnabled;
+      const label = document.getElementById('auto-read-label');
+      if (autoReadEnabled) {
+        label.innerText = 'ON';
+        label.className = 'text-emerald-700 font-black';
+        speakTeacherWithBell("Teacher auto read is", "turned ON.");
+      } else {
+        label.innerText = 'OFF';
+        label.className = 'text-rose-600 font-black';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    });
+  </script>
+
+  <script>
+    /* STAGE 1: 10 Target Vocabulary Words */
+    const rawStage1 = [
+      {
+        id: 'morning',
+        answer: 'morning',
+        options: ['morning', 'afternoon', 'brother'],
+        art: 'morning',
+        prefix: "The sun is rising. Good",
+        suffix: "!",
+        displayText: "The sun is rising. Good ____!"
+      },
+      {
+        id: 'afternoon',
+        answer: 'afternoon',
+        options: ['afternoon', 'morning', 'sister'],
+        art: 'afternoon',
+        prefix: "It is two o'clock. Good",
+        suffix: "!",
+        displayText: "It is two o'clock. Good ____!"
+      },
+      {
+        id: 'boy',
+        answer: 'boy',
+        options: ['boy', 'girl', 'mother'],
+        art: 'boy',
+        prefix: "Sam wears a tie. He is a",
+        suffix: ".",
+        displayText: "Sam wears a tie. He is a ____."
+      },
+      {
+        id: 'girl',
+        answer: 'girl',
+        options: ['girl', 'boy', 'father'],
+        art: 'girl',
+        prefix: "Emma wears a dress. She is a",
+        suffix: ".",
+        displayText: "Emma wears a dress. She is a ____."
+      },
+      {
+        id: 'father',
+        answer: 'father',
+        options: ['father', 'mother', 'classmate'],
+        art: 'father',
+        prefix: "He lifts his child high. He is my",
+        suffix: ".",
+        displayText: "He lifts his child high. He is my ____."
+      },
+      {
+        id: 'mother',
+        answer: 'mother',
+        options: ['mother', 'father', 'brother'],
+        art: 'mother',
+        prefix: "She hugs her baby sweetly. She is my",
+        suffix: ".",
+        displayText: "She hugs her baby sweetly. She is my ____."
+      },
+      {
+        id: 'brother',
+        answer: 'brother',
+        options: ['brother', 'sister', 'morning'],
+        art: 'brother',
+        prefix: "He plays with me every day. He is my",
+        suffix: ".",
+        displayText: "He plays with me every day. He is my ____."
+      },
+      {
+        id: 'sister',
+        answer: 'sister',
+        options: ['sister', 'brother', 'afternoon'],
+        art: 'sister',
+        prefix: "She shares snacks with me. She is my",
+        suffix: ".",
+        displayText: "She shares snacks with me. She is my ____."
+      },
+      {
+        id: 'classmate',
+        answer: 'classmate',
+        options: ['classmate', 'friend', 'boy'],
+        art: 'classmate',
+        prefix: "We study in Primary 1A together. He is my",
+        suffix: ".",
+        displayText: "We study in Primary 1A together. He is my ____."
+      },
+      {
+        id: 'friend',
+        answer: 'friend',
+        options: ['friend', 'classmate', 'girl'],
+        art: 'friend',
+        prefix: "We hold hands and play in the garden. She is my",
+        suffix: ".",
+        displayText: "We hold hands and play in the garden. She is my ____."
+      }
+    ];
+
+    /* STAGE 2: Grammar Woods (Pronouns & Be-verbs) */
+    const rawStage2 = [
+      {
+        prefix: "Hello, Lucy! How are",
+        suffix: "today?",
+        hint: "Talking directly to Lucy: I or you?",
+        answer: "you",
+        options: ["you", "I"],
+        fullSentence: "Hello Lucy! How are you today?",
+        art: 'friend'
+      },
+      {
+        prefix: "",
+        suffix: "am glad to meet my teacher.",
+        hint: "Which pronoun pairs with 'am': I or You?",
+        answer: "I",
+        options: ["I", "You"],
+        fullSentence: "I am glad to meet my teacher.",
+        art: 'classmate'
+      },
+      {
+        prefix: "Ken is a pupil.",
+        suffix: "is in Class 1A.",
+        hint: "Ken is a boy: He or She?",
+        answer: "He",
+        options: ["He", "She"],
+        fullSentence: "Ken is a pupil. He is in Class 1A.",
+        art: 'boy'
+      },
+      {
+        prefix: "Lily is kind.",
+        suffix: "is my sister.",
+        hint: "Lily is a girl: He or She?",
+        answer: "She",
+        options: ["She", "He"],
+        fullSentence: "Lily is kind. She is my sister.",
+        art: 'girl'
+      },
+      {
+        prefix: "Tim",
+        suffix: "my cheerful classmate.",
+        hint: "One pupil: am, is, or are?",
+        answer: "is",
+        options: ["is", "am", "are"],
+        fullSentence: "Tim is my cheerful classmate.",
+        art: 'classmate'
+      },
+      {
+        prefix: "Wendy and I",
+        suffix: "good friends.",
+        hint: "Two people together (We): am, is, or are?",
+        answer: "are",
+        options: ["are", "am", "is"],
+        fullSentence: "Wendy and I are good friends.",
+        art: 'friend'
+      },
+      {
+        prefix: "I",
+        suffix: "seven years old.",
+        hint: "Pronoun 'I': am, is, or are?",
+        answer: "am",
+        options: ["am", "is", "are"],
+        fullSentence: "I am seven years old.",
+        art: 'boy'
+      }
+    ];
+
+    /* STAGE 3: Capital & Punctuation Castle */
+    const rawStage3 = [
+      {
+        raw: "my friend is tim",
+        options: [
+          "My friend is Tim.",
+          "my Friend is tim?",
+          "My friend is tim."
+        ],
+        correct: "My friend is Tim.",
+        explain: "Start with capital 'M'. The name 'Tim' needs a capital 'T'. Ends with a full stop (.).",
+        prefix: "Which sentence is correct?",
+        suffix: "My friend is Tim."
+      },
+      {
+        raw: "how old are you",
+        options: [
+          "How old are you?",
+          "how Old are you.",
+          "How old are you."
+        ],
+        correct: "How old are you?",
+        explain: "Start with capital 'H'. It asks age, so it ends with a question mark (?).",
+        prefix: "Which question is correct?",
+        suffix: "How old are you?"
+      },
+      {
+        raw: "i am in class 1a",
+        options: [
+          "I am in Class 1A.",
+          "i am In class 1a.",
+          "I am in class 1a?"
+        ],
+        correct: "I am in Class 1A.",
+        explain: "The letter 'I' is always capital. 'Class 1A' needs capital 'C' and 'A'. Ends with (.).",
+        prefix: "Which sentence is correct?",
+        suffix: "I am in Class 1A."
+      },
+      {
+        raw: "what is your name",
+        options: [
+          "What is your name?",
+          "what is Your name.",
+          "What is your name."
+        ],
+        correct: "What is your name?",
+        explain: "Start with capital 'W'. It asks a question, so it ends with a question mark (?).",
+        prefix: "Which question is correct?",
+        suffix: "What is your name?"
+      },
+      {
+        raw: "she is my sister",
+        options: [
+          "She is my sister.",
+          "she Is my sister.",
+          "She is my sister?"
+        ],
+        correct: "She is my sister.",
+        explain: "Start with capital 'S'. It is a telling statement, so it ends with a full stop (.).",
+        prefix: "Which sentence is correct?",
+        suffix: "She is my sister."
+      }
+    ];
+
+    /* STAGE 4: Social Dialogue Chat Arena */
+    const rawStage4 = [
+      {
+        speaker: "Teacher says in the morning:",
+        prompt: "Good morning, boys and girls.",
+        art: 'morning',
+        prefix: "Good morning boys and girls. Pupil says:",
+        suffix: "",
+        options: [
+          "Good morning, teacher.",
+          "Good afternoon, teacher.",
+          "I am six years old."
+        ],
+        correct: "Good morning, teacher."
+      },
+      {
+        speaker: "Classmate greets you politely:",
+        prompt: "How are you today?",
+        art: 'classmate',
+        prefix: "How are you today? You reply:",
+        suffix: "",
+        options: [
+          "I am fine, thank you.",
+          "My name is Ray.",
+          "Good morning."
+        ],
+        correct: "I am fine, thank you."
+      },
+      {
+        speaker: "A new classmate asks you:",
+        prompt: "What is your name?",
+        art: 'friend',
+        prefix: "What is your name? You reply:",
+        suffix: "",
+        options: [
+          "My name is Oliver.",
+          "I am in Class 1C.",
+          "I am fine, thank you."
+        ],
+        correct: "My name is Oliver."
+      },
+      {
+        speaker: "Teacher asks on the playground:",
+        prompt: "What class are you in?",
+        art: 'classmate',
+        prefix: "What class are you in? You reply:",
+        suffix: "",
+        options: [
+          "I am in Class 1B.",
+          "I am seven years old.",
+          "My name is Amy."
+        ],
+        correct: "I am in Class 1B."
+      },
+      {
+        speaker: "A classmate asks on your birthday:",
+        prompt: "How old are you?",
+        art: 'boy',
+        prefix: "How old are you? You reply:",
+        suffix: "",
+        options: [
+          "I am six years old.",
+          "Good morning.",
+          "I am in Class 1A."
+        ],
+        correct: "I am six years old."
+      }
+    ];
+  </script>
+
+  <script>
+    let stage1Pool = [];
+    let stage2Pool = [];
+    let stage3Pool = [];
+    let stage4Pool = [];
+
+    let currentStage = 1;
+    let s1Index = 0;
+    let s2Index = 0;
+    let s3Index = 0;
+    let s4Index = 0;
+
+    let starsEarned = 0;
+    let answeredCount = 0;
+    let totalQuestions = 0;
+
+    function initGamePools() {
+      stage1Pool = shuffleArray(rawStage1);
+      stage2Pool = shuffleArray(rawStage2);
+      stage3Pool = shuffleArray(rawStage3);
+      stage4Pool = shuffleArray(rawStage4);
+
+      s1Index = 0;
+      s2Index = 0;
+      s3Index = 0;
+      s4Index = 0;
+      starsEarned = 0;
+      answeredCount = 0;
+      totalQuestions = stage1Pool.length + stage2Pool.length + stage3Pool.length + stage4Pool.length;
+
+      document.getElementById('star-count').innerText = 0;
+      updateProgressBar();
+    }
+
+    function awardStar() {
+      starsEarned++;
+      answeredCount++;
+      document.getElementById('star-count').innerText = starsEarned;
+      updateProgressBar();
+      playSuccessSound();
+    }
+
+    function updateProgressBar() {
+      const pct = Math.min(100, Math.round((answeredCount / totalQuestions) * 100));
+      document.getElementById('quest-progress-bar').style.width = Math.max(5, pct) + '%';
+      document.getElementById('progress-percentage').innerText = pct + '% Completed';
+    }
+
+    function readCurrentTeacherPromptWithBell() {
+      let prefix = "";
+      let suffix = "";
+
+      if (currentStage === 1 && stage1Pool[s1Index]) {
+        prefix = stage1Pool[s1Index].prefix;
+        suffix = stage1Pool[s1Index].suffix;
+      } else if (currentStage === 2 && stage2Pool[s2Index]) {
+        prefix = stage2Pool[s2Index].prefix;
+        suffix = stage2Pool[s2Index].suffix;
+      } else if (currentStage === 3 && stage3Pool[s3Index]) {
+        prefix = stage3Pool[s3Index].prefix;
+        suffix = stage3Pool[s3Index].suffix;
+      } else if (currentStage === 4 && stage4Pool[s4Index]) {
+        prefix = stage4Pool[s4Index].prefix;
+        suffix = stage4Pool[s4Index].suffix;
+      }
+
+      updateTeacherBannerWithBell(prefix, suffix);
+      speakTeacherWithBell(prefix, suffix);
+    }
+
+    function triggerAutoReadIfEnabled() {
+      if (autoReadEnabled) {
+        setTimeout(() => {
+          readCurrentTeacherPromptWithBell();
+        }, 400);
+      } else {
+        let prefix = "", suffix = "";
+        if (currentStage === 1 && stage1Pool[s1Index]) {
+          prefix = stage1Pool[s1Index].prefix;
+          suffix = stage1Pool[s1Index].suffix;
+        } else if (currentStage === 2 && stage2Pool[s2Index]) {
+          prefix = stage2Pool[s2Index].prefix;
+          suffix = stage2Pool[s2Index].suffix;
+        } else if (currentStage === 3 && stage3Pool[s3Index]) {
+          prefix = stage3Pool[s3Index].prefix;
+          suffix = stage3Pool[s3Index].suffix;
+        } else if (currentStage === 4 && stage4Pool[s4Index]) {
+          prefix = stage4Pool[s4Index].prefix;
+          suffix = stage4Pool[s4Index].suffix;
+        }
+        updateTeacherBannerWithBell(prefix, suffix);
+      }
+    }
+
+    function switchStage(stageNum) {
+      currentStage = stageNum;
+      document.querySelectorAll('.quest-stage').forEach(el => el.classList.add('hidden'));
+
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`nav-btn-${i}`);
+        if (i === stageNum) {
+          btn.className = "py-2.5 px-3 rounded-2xl bg-amber-400 text-white font-extrabold text-sm shadow-comic border-2 border-amber-500 flex items-center justify-center gap-1.5 transition";
+        } else {
+          btn.className = "py-2.5 px-3 rounded-2xl bg-white text-slate-600 font-bold text-sm shadow-sm border-2 border-slate-200 flex items-center justify-center gap-1.5 hover:bg-slate-50 transition";
+        }
+      }
+
+      if (stageNum === 1) {
+        document.getElementById('stage-1').classList.remove('hidden');
+        document.getElementById('stage-indicator').innerText = 'Stage 1: Cartoon Vocab Island';
+        renderStage1();
+      } else if (stageNum === 2) {
+        document.getElementById('stage-2').classList.remove('hidden');
+        document.getElementById('stage-indicator').innerText = 'Stage 2: Grammar Woods';
+        renderStage2();
+      } else if (stageNum === 3) {
+        document.getElementById('stage-3').classList.remove('hidden');
+        document.getElementById('stage-indicator').innerText = 'Stage 3: Capital Castle';
+        renderStage3();
+      } else if (stageNum === 4) {
+        document.getElementById('stage-4').classList.remove('hidden');
+        document.getElementById('stage-indicator').innerText = 'Stage 4: Chat Arena';
+        renderStage4();
+      }
+    }
+
+    /* Stage 1 Rendering */
+    function renderStage1() {
+      if (s1Index >= stage1Pool.length) {
+        showStageTransition("Vocab Island Cleared! Marching into Grammar Woods!", () => switchStage(2));
+        return;
+      }
+
+      const item = stage1Pool[s1Index];
+      document.getElementById('s1-q-index').innerText = s1Index + 1;
+      document.getElementById('s1-art-container').innerHTML = cartoonSVG[item.art] || '';
+
+      const promptDisplay = document.getElementById('s1-prompt-display');
+      promptDisplay.innerHTML = `
+        <span>${item.prefix}</span>
+        ${getBellBadgeHTML()}
+        <span>${item.suffix}</span>
+      `;
+
+      const feedback = document.getElementById('s1-feedback');
+      feedback.innerText = '';
+      feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl';
+
+      const optionsContainer = document.getElementById('s1-options');
+      optionsContainer.innerHTML = '';
+
+      const shuffledOptions = shuffleArray(item.options);
+
+      shuffledOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-bounce w-full py-3.5 px-4 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 text-slate-900 font-black text-lg rounded-2xl shadow-comic transition';
+        btn.innerText = opt;
+        btn.onclick = () => handleStage1Pick(opt, btn, item.answer);
+        optionsContainer.appendChild(btn);
+      });
+
+      triggerAutoReadIfEnabled();
+    }
+
+    function handleStage1Pick(chosen, btn, correct) {
+      const feedback = document.getElementById('s1-feedback');
+      const allBtns = document.getElementById('s1-options').querySelectorAll('button');
+
+      if (chosen === correct) {
+        btn.classList.remove('bg-amber-50', 'border-amber-300');
+        btn.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+        feedback.innerText = `Awesome! The answer is "${correct}"! ⭐`;
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl bg-emerald-100 text-emerald-800';
+        awardStar();
+
+        allBtns.forEach(b => b.disabled = true);
+        setTimeout(() => {
+          s1Index++;
+          renderStage1();
+        }, 1200);
+      } else {
+        btn.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-700');
+        feedback.innerText = 'Look closely at the cartoon and try again!';
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl bg-rose-100 text-rose-800';
+        playErrorSound();
+      }
+    }
+
+    /* Stage 2 Rendering */
+    function renderStage2() {
+      if (s2Index >= stage2Pool.length) {
+        showStageTransition("Grammar Woods Cleared! Entering Capital Castle!", () => switchStage(3));
+        return;
+      }
+
+      const item = stage2Pool[s2Index];
+      document.getElementById('s2-q-index').innerText = s2Index + 1;
+      document.getElementById('s2-art-container').innerHTML = cartoonSVG[item.art] || '';
+
+      const qContainer = document.getElementById('s2-question-text');
+      qContainer.innerHTML = `
+        <span>${item.prefix}</span>
+        ${getBellBadgeHTML()}
+        <span>${item.suffix}</span>
+      `;
+
+      document.getElementById('s2-hint-text').innerText = item.hint;
+
+      const feedback = document.getElementById('s2-feedback');
+      feedback.innerText = '';
+      feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl';
+
+      const optionsContainer = document.getElementById('s2-options');
+      optionsContainer.innerHTML = '';
+
+      const shuffledOptions = shuffleArray(item.options);
+
+      shuffledOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-bounce py-3.5 px-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 text-slate-900 font-black text-xl rounded-2xl shadow-comic transition';
+        btn.innerText = opt;
+        btn.onclick = () => handleStage2Pick(opt, btn, item.answer, item.fullSentence);
+        optionsContainer.appendChild(btn);
+      });
+
+      triggerAutoReadIfEnabled();
+    }
+
+    function handleStage2Pick(chosen, btn, correct, fullSentence) {
+      const feedback = document.getElementById('s2-feedback');
+      const allBtns = document.getElementById('s2-options').querySelectorAll('button');
+
+      if (chosen === correct) {
+        btn.classList.remove('bg-emerald-50', 'border-emerald-300');
+        btn.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+        feedback.innerText = `Well done! "${fullSentence}" ⭐`;
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl bg-emerald-100 text-emerald-800';
+        awardStar();
+
+        allBtns.forEach(b => b.disabled = true);
+        setTimeout(() => {
+          s2Index++;
+          renderStage2();
+        }, 1300);
+      } else {
+        btn.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-700');
+        feedback.innerText = 'Check the pronoun or verb carefully! Try again.';
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl bg-rose-100 text-rose-800';
+        playErrorSound();
+      }
+    }
+
+    /* Stage 3 Rendering */
+    function renderStage3() {
+      if (s3Index >= stage3Pool.length) {
+        showStageTransition("Capital Castle Conquered! Entering Chat Arena!", () => switchStage(4));
+        return;
+      }
+
+      const item = stage3Pool[s3Index];
+      document.getElementById('s3-q-index').innerText = s3Index + 1;
+      document.getElementById('s3-raw-sentence').innerText = item.raw;
+
+      const feedback = document.getElementById('s3-feedback');
+      feedback.innerText = '';
+      feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-sm sm:text-base px-4 py-1.5 rounded-xl';
+
+      const optionsContainer = document.getElementById('s3-options');
+      optionsContainer.innerHTML = '';
+
+      const shuffledOptions = shuffleArray(item.options);
+
+      shuffledOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-bounce w-full text-left py-3 px-4 bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 text-slate-900 font-extrabold text-base sm:text-lg rounded-2xl shadow-sm transition flex items-center gap-3';
+        btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-indigo-200 text-indigo-800 flex items-center justify-center text-xs font-black flex-shrink-0">✓</span><span>${opt}</span>`;
+        btn.onclick = () => handleStage3Pick(opt, btn, item.correct, item.explain);
+        optionsContainer.appendChild(btn);
+      });
+
+      triggerAutoReadIfEnabled();
+    }
+
+    function handleStage3Pick(chosen, btn, correct, explanation) {
+      const feedback = document.getElementById('s3-feedback');
+      const allBtns = document.getElementById('s3-options').querySelectorAll('button');
+
+      if (chosen === correct) {
+        btn.classList.remove('bg-indigo-50', 'border-indigo-200');
+        btn.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+        feedback.innerHTML = `<span><strong>Super!</strong> ${explanation} ⭐</span>`;
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-sm px-4 py-1.5 rounded-xl bg-emerald-100 text-emerald-800';
+        awardStar();
+
+        allBtns.forEach(b => b.disabled = true);
+        setTimeout(() => {
+          s3Index++;
+          renderStage3();
+        }, 1400);
+      } else {
+        btn.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-700');
+        feedback.innerText = 'Check capital letters and the ending mark (. or ?)!';
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-sm px-4 py-1.5 rounded-xl bg-rose-100 text-rose-800';
+        playErrorSound();
+      }
+    }
+
+    /* Stage 4 Rendering */
+    function renderStage4() {
+      if (s4Index >= stage4Pool.length) {
+        showCelebrationVictory();
+        return;
+      }
+
+      const item = stage4Pool[s4Index];
+      document.getElementById('s4-q-index').innerText = s4Index + 1;
+      document.getElementById('s4-art-container').innerHTML = cartoonSVG[item.art] || '';
+      document.getElementById('s4-speaker').innerText = item.speaker;
+      document.getElementById('s4-prompt-text').innerText = `"${item.prompt}"`;
+
+      const feedback = document.getElementById('s4-feedback');
+      feedback.innerText = '';
+      feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-sm sm:text-base px-4 py-1.5 rounded-xl';
+
+      const optionsContainer = document.getElementById('s4-options');
+      optionsContainer.innerHTML = '';
+
+      const shuffledOptions = shuffleArray(item.options);
+
+      shuffledOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-bounce w-full py-3.5 px-5 bg-sky-50 hover:bg-sky-100 border-2 border-sky-300 text-slate-900 font-extrabold text-base sm:text-lg rounded-2xl shadow-comic text-left transition';
+        btn.innerText = opt;
+        btn.onclick = () => handleStage4Pick(opt, btn, item.correct);
+        optionsContainer.appendChild(btn);
+      });
+
+      triggerAutoReadIfEnabled();
+    }
+
+    function handleStage4Pick(chosen, btn, correct) {
+      const feedback = document.getElementById('s4-feedback');
+      const allBtns = document.getElementById('s4-options').querySelectorAll('button');
+
+      if (chosen === correct) {
+        btn.classList.remove('bg-sky-50', 'border-sky-300');
+        btn.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+        feedback.innerText = 'Smart and polite response! ⭐';
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl bg-emerald-100 text-emerald-800';
+        awardStar();
+
+        allBtns.forEach(b => b.disabled = true);
+        setTimeout(() => {
+          s4Index++;
+          renderStage4();
+        }, 1300);
+      } else {
+        btn.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-700');
+        feedback.innerText = 'Think about what you would answer politely!';
+        feedback.className = 'mt-3 min-h-[2.5rem] flex items-center justify-center text-center font-black text-base px-4 py-1.5 rounded-xl bg-rose-100 text-rose-800';
+        playErrorSound();
+      }
+    }
+
+    function showStageTransition(message, nextCallback) {
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4';
+      overlay.innerHTML = `
+        <div class="bg-white rounded-3xl p-6 text-center max-w-sm w-full border-4 border-amber-400 shadow-2xl animate-bounce">
+          <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-500 mx-auto flex items-center justify-center text-2xl font-black mb-3">
+            ⭐
+          </div>
+          <h3 class="text-xl font-black text-slate-900 mb-1">${message}</h3>
+          <p class="text-xs text-slate-500 font-bold mb-4">Stage cleared successfully!</p>
+          <button id="modal-next-btn" class="px-6 py-2.5 bg-amber-400 hover:bg-amber-500 text-white font-black rounded-2xl shadow-comic border-b-4 border-amber-600 transition">
+            Continue ➔
+          </button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      playSuccessSound();
+
+      document.getElementById('modal-next-btn').onclick = () => {
+        document.body.removeChild(overlay);
+        nextCallback();
+      };
+    }
+
+    function showCelebrationVictory() {
+      document.querySelectorAll('.quest-stage').forEach(el => el.classList.add('hidden'));
+      const vic = document.getElementById('victory-modal');
+      vic.classList.remove('hidden');
+      document.getElementById('final-stars').innerText = starsEarned;
+      document.getElementById('stage-indicator').innerText = 'Victory! All 4 Stages Cleared!';
+
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 130,
+          spread: 90,
+          origin: { y: 0.6 }
+        });
+      }
+
+      playSuccessSound();
+      setTimeout(playSuccessSound, 250);
+    }
+
+    function restartFullQuest() {
+      initGamePools();
+      switchStage(1);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initGamePools();
+      renderStage1();
+    });
+  </script>
+</body>
+</html>
